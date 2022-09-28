@@ -17,7 +17,7 @@ class AuthRepository {
   AuthRepository({
     required this.ref,
   })  : localStorage = ref.watch(loacalStorageProvider),
-        httpService = ref.watch(dioHttpProvider);
+        httpService = ref.watch(httpServiceProvider);
 
   User? _user;
 

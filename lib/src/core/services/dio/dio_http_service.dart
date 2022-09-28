@@ -8,7 +8,7 @@ import 'package:quiz_ui/src/core/data/either_result.dart';
 import 'package:quiz_ui/src/core/exceptions/custom_exception.dart';
 import 'package:quiz_ui/src/core/services/storage/local_storage_service.dart';
 
-final dioHttpProvider = Provider<DioHttpService>((ref) {
+final httpServiceProvider = Provider<DioHttpService>((ref) {
   return DioHttpService(ref);
 });
 

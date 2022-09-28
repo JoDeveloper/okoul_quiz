@@ -49,6 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(),
         body: Stack(
           children: [
             NestedScrollView(
@@ -61,7 +62,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     pinned: true,
                     expandedHeight: expandedHight,
-                    flexibleSpace: const _AppBar(),
                   ),
                 ];
               },
@@ -100,6 +100,7 @@ class _Body extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final authRepo = ref.watch(authRepositoryProvider);
     final user = ref.watch(authRepositoryProvider).currentUser;
     return SingleChildScrollView(
       child: Column(
@@ -116,22 +117,32 @@ class _Body extends ConsumerWidget {
                     tiles: [
                       ListTile(
                         onTap: () {},
-                        leading: const Icon(Icons.person),
+                        leading: const Icon(Icons.person_outlined),
                         title: Text(
                           user!.name!,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        trailing: const _ForwardIcon(),
                       ),
                       gapH32,
                       ListTile(
                         onTap: () {},
-                        leading: const Icon(Icons.phone_android),
+                        leading: const Icon(Icons.phone_android_outlined),
                         title: Text(
                           user.mobile,
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        trailing: const _ForwardIcon(),
+                      ),
+                      gapH32,
+                      ListTile(
+                        onTap: () {
+                          authRepo.logout();
+                          GoRouter.of(context).replaceNamed(AppRoute.auth.name);
+                        },
+                        leading: const Icon(Icons.logout_outlined),
+                        title: const Text(
+                          "Logout",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ],
                   ).toList(),
@@ -141,47 +152,6 @@ class _Body extends ConsumerWidget {
           )
         ],
       ),
-    );
-  }
-}
-
-class _AppBar extends ConsumerWidget {
-  const _AppBar({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authRepo = ref.watch(authRepositoryProvider);
-    return AppBar(
-      elevation: 0.0,
-      actions: <Widget>[
-        IconButton(
-          icon: const Icon(
-            Icons.logout,
-            size: 24,
-          ),
-          tooltip: 'Logout',
-          onPressed: () {
-            authRepo.logout();
-            GoRouter.of(context).replaceNamed(AppRoute.auth.name);
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class _ForwardIcon extends StatelessWidget {
-  const _ForwardIcon({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Icon(
-      Icons.arrow_forward_ios,
-      size: 25.0,
     );
   }
 }

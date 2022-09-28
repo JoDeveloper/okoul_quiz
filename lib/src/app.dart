@@ -14,7 +14,7 @@ class QuizUiApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       onGenerateTitle: (BuildContext context) => 'QuizUi',
       theme: FlexThemeData.light(scheme: FlexScheme.outerSpace),
-      darkTheme: FlexThemeData.dark(scheme: FlexScheme.outerSpace),
+      // darkTheme: FlexThemeData.dark(scheme: FlexScheme.outerSpace),
       themeMode: ThemeMode.system,
     );
   }

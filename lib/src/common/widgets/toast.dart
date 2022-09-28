@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:quiz_ui/src/common/extensions/duration_extensions.dart';
+import 'package:quiz_ui/src/common/extensions/int_extensions.dart';
 
 class ErrorFlash extends StatelessWidget {
   final String message;
@@ -26,7 +27,7 @@ class ErrorFlash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => true,
+      onWillPop: () async => false,
       child: Dialog(
         alignment: alignment,
         backgroundColor: color ?? const Color(0xFFFDEDEE),
@@ -87,7 +88,7 @@ class SuccessFlash extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => true,
+      onWillPop: () async => false,
       child: Dialog(
         alignment: alignment,
         backgroundColor: color ?? const Color(0xFFEAF7EE),
@@ -140,8 +141,8 @@ class ShowFlash {
         barrierColor: Colors.white.withOpacity(0),
         context: context,
         builder: (_) {
-          Future.delayed(Duration(milliseconds: duration), () {
-            SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+          duration.milliseconds.delay(() {
+            Navigator.of(context).pop();
           });
           return ErrorFlash(
             message: message,
@@ -173,8 +174,8 @@ class ShowFlash {
         barrierColor: Colors.white.withOpacity(0),
         context: context,
         builder: (_) {
-          Future.delayed(Duration(milliseconds: duration), () {
-            SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop');
+          duration.milliseconds.delay(() {
+            Navigator.of(context).pop();
           });
           return SuccessFlash(
             message: message,

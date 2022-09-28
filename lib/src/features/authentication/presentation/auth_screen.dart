@@ -30,10 +30,11 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: context.height * 0.2),
             FadeInDownBig(
               child: Image.asset('assets/images/quiz.png'),
             ),
-            const SizedBox(height: 20.0),
+            SizedBox(height: context.height * 0.05),
             Container(
               height: 50,
               margin: const EdgeInsets.symmetric(horizontal: 10),

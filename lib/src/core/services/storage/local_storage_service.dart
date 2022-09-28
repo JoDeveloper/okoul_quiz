@@ -1,8 +1,8 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:quiz_ui/src/common/utils/logger.dart';
 import 'package:quiz_ui/src/features/authentication/data/user_model.dart';
 
 final loacalStorageProvider = Provider<LocalStorage>((ref) {
@@ -17,7 +17,7 @@ class LocalStorage {
     _init().then(
       (_) => {
         _box.listenKey(_Keys.token, (value) {
-          logger.i('token change $value');
+          log('token change $value');
         }),
       },
     );

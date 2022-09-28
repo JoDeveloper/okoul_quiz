@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> _buildScreens() {
     return [
       const HomeWidget(),
-      LeaderBoardScreen(),
+      const LeaderBoardScreen(),
       const ProfileScreen(),
     ];
   }

@@ -7,6 +7,7 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:quiz_ui/src/common/extensions/context_extensions.dart';
 import 'package:quiz_ui/src/common/extensions/int_extensions.dart';
 import 'package:quiz_ui/src/common/widgets/toast.dart';
+import 'package:quiz_ui/src/constants/app_sizes.dart';
 import 'package:quiz_ui/src/features/authentication/repositories/auth_repository.dart';
 import 'package:quiz_ui/src/routing/routes.dart';
 
@@ -60,7 +61,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 );
               },
             ),
-            const SizedBox(height: 10.0),
+            gapH12,
             SizedBox(
               width: context.width / 3,
               child: OutlinedButton(

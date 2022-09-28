@@ -49,7 +49,7 @@ class LeaderBoardScreen extends ConsumerWidget {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            const SizedBox(height: 5),
+                            gapH4,
                             Expanded(
                               child: _Info(score: score),
                             )

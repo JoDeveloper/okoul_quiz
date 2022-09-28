@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lottie/lottie.dart';
 import 'package:quiz_ui/src/common/extensions/context_extensions.dart';
+import 'package:quiz_ui/src/common/extensions/int_extensions.dart';
 import 'package:quiz_ui/src/common/widgets/toast.dart';
 import 'package:quiz_ui/src/constants/app_sizes.dart';
 import 'package:quiz_ui/src/constants/constants.dart';
@@ -23,51 +25,66 @@ class _HomeWidgetState extends ConsumerState<HomeWidget> {
   @override
   void initState() {
     pageController = PageController();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    final authRepository = ref.watch(authRepositoryProvider);
-    final homeRepo = ref.watch(homeRepositoryProvider);
+    SchedulerBinding.instance.addPostFrameCallback((_) => _checkUserName());
 
-    SchedulerBinding.instance.addPostFrameCallback(
-      (_) => _checkUserName(authRepository, context),
-    );
+    final homeRepo = ref.watch(homeRepositoryProvider);
+    final competitionStarted = ref.watch(compitionStartedProvider);
+    final timerStarted = ref.watch(timerStartedProvider);
+    final getQuestions = ref.watch(getQuestionsProvider);
 
     return Scaffold(
-      body: SafeArea(
-        child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              SliverAppBar(
-                pinned: true,
-                expandedHeight: context.height * 0.18,
-                flexibleSpace: FlexibleSpaceBar(
-                  background: homeRepo.competitionStarted ? const Counter() : null,
-                  centerTitle: true,
-                  title: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      padding: const EdgeInsets.only(top: 0.0),
-                      child: Image.asset(
-                        'assets/images/okoul.png',
-                        width: context.width * 0.16,
-                        height: context.width * 0.16,
-                      ),
+      body: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverAppBar(
+              pinned: true,
+              expandedHeight: context.height * 0.18,
+              flexibleSpace: FlexibleSpaceBar(
+                centerTitle: true,
+                title: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    padding: const EdgeInsets.only(top: 0.0),
+                    child: Image.asset(
+                      'assets/images/okoul.png',
+                      width: context.width * 0.16,
+                      height: context.width * 0.16,
                     ),
                   ),
                 ),
               ),
-            ];
-          },
-          body: Column(
+            ),
+          ];
+        },
+        body: SingleChildScrollView(
+          child: Column(
             children: [
+              AnimatedSwitcher(
+                duration: 1.seconds,
+                child: competitionStarted && timerStarted
+                    ? Align(
+                        alignment: Alignment.center,
+                        child: SizedBox(
+                          height: 150,
+                          width: context.width / 5,
+                          child: Counter(onComplete: () {}),
+                        ),
+                      )
+                    : Lottie.asset(
+                        'assets/json/start-quiz.json',
+                      ),
+              ),
+              gapW24,
               Visibility(
-                visible: false,
+                visible: !competitionStarted,
                 child: Column(
                   children: [
-                    SizedBox(height: context.height * .09),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: Text.rich(
@@ -84,27 +101,63 @@ class _HomeWidgetState extends ConsumerState<HomeWidget> {
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    SizedBox(height: context.height * .09),
-                    ButtonTheme(
-                      minWidth: context.width / 3,
+                    SizedBox(height: context.height * .019),
+                    SizedBox(
+                      width: context.width / 3,
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: homeRepo.startCompition,
                         child: const Text('Let\'s Go'),
                       ),
                     )
                   ],
                 ),
               ),
-              SizedBox(
-                height: context.height / 1.5,
-                child: PageView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: pageController,
-                  onPageChanged: (index) {},
-                  itemCount: questionsData.length,
-                  itemBuilder: (context, index) => QuestionCard(
-                    question: questionsData[index],
-                  ),
+              Visibility(
+                visible: competitionStarted,
+                child: Column(
+                  children: [
+                    getQuestions.when(
+                      data: (questions) {
+                        return SizedBox(
+                          height: context.width / 1.09,
+                          child: PageView.builder(
+                            physics: const NeverScrollableScrollPhysics(),
+                            controller: pageController,
+                            onPageChanged: (index) {},
+                            itemCount: questionsData.length,
+                            itemBuilder: (context, index) => QuestionCard(
+                              question: questionsData[index],
+                            ),
+                          ),
+                        );
+                      },
+                      error: (error, s) => const SizedBox.shrink(),
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    ),
+                    gapH4,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: context.width / 4,
+                          child: OutlinedButton(
+                            onPressed: () {},
+                            child: const Text('Skip'),
+                          ),
+                        ),
+                        gapW24,
+                        SizedBox(
+                          width: context.width / 3,
+                          child: OutlinedButton(
+                            onPressed: () {},
+                            child: const Text('Next'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -114,7 +167,8 @@ class _HomeWidgetState extends ConsumerState<HomeWidget> {
     );
   }
 
-  void _checkUserName(AuthRepository authRepository, BuildContext context) {
+  void _checkUserName() {
+    final authRepository = ref.read(authRepositoryProvider);
     if (authRepository.currentUser?.name == null) {
       showModalBottomSheet(
         context: context,

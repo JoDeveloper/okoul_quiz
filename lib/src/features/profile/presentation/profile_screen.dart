@@ -47,47 +47,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(),
-        body: Stack(
-          children: [
-            NestedScrollView(
-              controller: scrollController,
-              headerSliverBuilder: (context, value) {
-                return [
-                  SliverAppBar(
-                    systemOverlayStyle: SystemUiOverlayStyle(
-                      statusBarColor: Theme.of(context).primaryColor,
-                    ),
-                    pinned: true,
-                    expandedHeight: expandedHight,
+    return Scaffold(
+      appBar: AppBar(),
+      body: Stack(
+        children: [
+          NestedScrollView(
+            controller: scrollController,
+            headerSliverBuilder: (context, value) {
+              return [
+                SliverAppBar(
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: Theme.of(context).primaryColor,
                   ),
-                ];
-              },
-              body: const _Body(),
-            ),
-            AnimatedPositioned(
-              duration: 300.milliseconds,
-              top: top == 95.0 ? (top - 75) : (top - 50.0),
-              width: context.width,
-              child: Stack(
-                children: [
-                  Align(
-                    child: ClipOval(
-                      child: Image.asset(
-                        "assets/images/avatar.png",
-                        fit: BoxFit.cover,
-                        width: 65 + (top - 45),
-                        height: 65 + (top - 45),
-                      ),
+                  pinned: true,
+                  expandedHeight: expandedHight,
+                ),
+              ];
+            },
+            body: const _Body(),
+          ),
+          AnimatedPositioned(
+            duration: 300.milliseconds,
+            top: top == 95.0 ? (top - 75) : (top - 50.0),
+            width: context.width,
+            child: Stack(
+              children: [
+                Align(
+                  child: ClipOval(
+                    child: Image.asset(
+                      "assets/images/avatar.png",
+                      fit: BoxFit.cover,
+                      width: 65 + (top - 45),
+                      height: 65 + (top - 45),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -102,6 +100,7 @@ class _Body extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authRepo = ref.watch(authRepositoryProvider);
     final user = ref.watch(authRepositoryProvider).currentUser;
+
     return SingleChildScrollView(
       child: Column(
         children: [

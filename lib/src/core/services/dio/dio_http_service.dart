@@ -19,22 +19,26 @@ class DioHttpService {
 
   DioHttpService(this.ref);
 
-  Future<Either<Map<String, dynamic>, CustomException>> get(
+  Future<Either<dynamic, CustomException>> get(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     String? customBaseUrl,
   }) async {
-    final response = await http.get(Uri.parse(Api.apiBaseUrl + endpoint), headers: headers);
+    final response = await http.get(
+      Uri.parse(Api.apiBaseUrl + endpoint),
+      headers: {...headers, if (endpoint != Api.login) ...authHeaders},
+    );
+
     final paresdData = jsonDecode(response.body);
-    if (response.statusCode != HttpStatus.ok && paresdData['success'] == false) {
+    if (response.statusCode != HttpStatus.ok) {
       return Error(
         CustomException(
           title: 'Http Error!',
-          message: paresdData['message'],
+          message: paresdData['message'] ?? 'Server Error',
         ),
       );
     }
-    return Success(paresdData as Map<String, dynamic>);
+    return Success(paresdData);
   }
 
   Future<Either<dynamic, CustomException>> post(
@@ -51,11 +55,11 @@ class DioHttpService {
       );
 
       final paresdData = jsonDecode(response.body);
-      if (response.statusCode != HttpStatus.ok && paresdData['success'] == false) {
+      if (response.statusCode != HttpStatus.ok) {
         return Error(
           CustomException(
             title: 'Http Error!',
-            message: paresdData['message'],
+            message: paresdData['message'] ?? 'Server Error',
           ),
         );
       }

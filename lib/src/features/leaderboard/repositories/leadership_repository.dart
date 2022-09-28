@@ -21,10 +21,10 @@ class LeadershipRepository {
 
   Future<List<Score>> getTopScores() async {
     List<Score> scores = [];
-    final response = await ref.read(httpServiceProvider).post(Api.topScore);
+    final response = await ref.read(httpServiceProvider).get(Api.topScore);
 
     response.when((data) {
-      scores = scoresFromJson(jsonDecode(data));
+      scores = scoresFromJson(json.encode(data));
     }, (error) {
       log(error.message!);
     });

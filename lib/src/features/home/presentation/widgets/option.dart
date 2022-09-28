@@ -33,13 +33,12 @@ class Option extends StatelessWidget {
               height: 26,
               width: 26,
               decoration: BoxDecoration(
-                color: Colors.transparent, //checke answer
+                color: Colors.transparent,
                 borderRadius: BorderRadius.circular(50),
                 border: Border.all(
                   color: Colors.grey,
                 ),
               ),
-              // child: getTheRightColor() == Colors.grey ? null : Icon(getTheRightIcon(), size: 16),
             )
           ],
         ),

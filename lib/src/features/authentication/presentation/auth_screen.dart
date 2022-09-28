@@ -7,7 +7,6 @@ import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:quiz_ui/src/common/extensions/context_extensions.dart';
 import 'package:quiz_ui/src/common/extensions/int_extensions.dart';
 import 'package:quiz_ui/src/common/widgets/toast.dart';
-import 'package:quiz_ui/src/constants/constants.dart';
 import 'package:quiz_ui/src/features/authentication/repositories/auth_repository.dart';
 import 'package:quiz_ui/src/routing/routes.dart';
 
@@ -32,27 +31,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
         child: Column(
           children: [
             FadeInDownBig(
-              child: Image.asset(
-                'assets/images/quiz.png',
-                height: context.width / 2,
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
-              child: Text.rich(
-                TextSpan(
-                  children: [
-                    TextSpan(text: Constants.quizQoute),
-                    TextSpan(text: Constants.quizQoute2),
-                    TextSpan(text: '\n\n'),
-                    TextSpan(
-                      text: Constants.quizQoute3,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                textAlign: TextAlign.center,
-              ),
+              child: Image.asset('assets/images/quiz.png'),
             ),
             const SizedBox(height: 20.0),
             Container(
@@ -81,24 +60,30 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               },
             ),
             const SizedBox(height: 10.0),
-            OutlinedButton(
-              onPressed: () async {
-                if (number == null) return;
-                _login(authProvider, context);
-              },
-              child: isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator(),
-                    )
-                  : const Text(
-                      "Continue",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        fontStyle: FontStyle.normal,
-                        fontSize: 14,
+            SizedBox(
+              width: context.width / 3,
+              child: OutlinedButton(
+                onPressed: () async {
+                  if (number == null) return;
+                  _login(authProvider, context);
+                },
+                child: isLoading
+                    ? SizedBox(
+                        width: context.width / 2.5,
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
+                    : const Text(
+                        "Continue",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontStyle: FontStyle.normal,
+                          fontSize: 14,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
-                    ),
+              ),
             ),
           ],
         ),

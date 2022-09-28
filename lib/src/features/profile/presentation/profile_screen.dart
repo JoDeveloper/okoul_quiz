@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quiz_ui/src/common/extensions/context_extensions.dart';
+import 'package:quiz_ui/src/common/extensions/int_extensions.dart';
+import 'package:quiz_ui/src/constants/app_sizes.dart';
+import 'package:quiz_ui/src/features/authentication/repositories/auth_repository.dart';
+import 'package:quiz_ui/src/routing/routes.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -60,39 +65,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ];
               },
-              body: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: context.height * 0.05),
-                    const _UsernameAndPhone(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10.0),
-                      child: Card(
-                        child: Column(
-                          children: ListTile.divideTiles(
-                            context: context,
-                            tiles: [
-                              ListTile(
-                                onTap: () {},
-                                leading: const _DoneIcon(),
-                                title: const Text(
-                                  "captain_docs",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                trailing: const _ForwardIcon(),
-                                subtitle: const Text('docs_in_review'),
-                              ),
-                            ],
-                          ).toList(),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+              body: const _Body(),
             ),
             AnimatedPositioned(
-              duration: const Duration(milliseconds: 300),
+              duration: 300.milliseconds,
               top: top == 95.0 ? (top - 75) : (top - 50.0),
               width: context.width,
               child: Stack(
@@ -117,6 +93,58 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 }
 
+class _Body extends ConsumerWidget {
+  const _Body({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authRepositoryProvider).currentUser;
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: context.height / 3),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10.0),
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: Card(
+                child: Column(
+                  children: ListTile.divideTiles(
+                    context: context,
+                    tiles: [
+                      ListTile(
+                        onTap: () {},
+                        leading: const Icon(Icons.person),
+                        title: Text(
+                          user!.name!,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        trailing: const _ForwardIcon(),
+                      ),
+                      gapH32,
+                      ListTile(
+                        onTap: () {},
+                        leading: const Icon(Icons.phone_android),
+                        title: Text(
+                          user.mobile,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        trailing: const _ForwardIcon(),
+                      ),
+                    ],
+                  ).toList(),
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
+
 class _AppBar extends ConsumerWidget {
   const _AppBar({
     Key? key,
@@ -124,6 +152,7 @@ class _AppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final authRepo = ref.watch(authRepositoryProvider);
     return AppBar(
       elevation: 0.0,
       actions: <Widget>[
@@ -133,45 +162,12 @@ class _AppBar extends ConsumerWidget {
             size: 24,
           ),
           tooltip: 'Logout',
-          onPressed: () {},
+          onPressed: () {
+            authRepo.logout();
+            GoRouter.of(context).replaceNamed(AppRoute.auth.name);
+          },
         ),
       ],
-    );
-  }
-}
-
-class _UsernameAndPhone extends ConsumerWidget {
-  const _UsernameAndPhone({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Padding(
-      padding: EdgeInsets.only(top: context.height * 0.09),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: const [
-          Text(
-            'joseph',
-            style: TextStyle(
-              fontSize: 23.0,
-              fontWeight: FontWeight.bold,
-              height: 1,
-            ),
-          ),
-          Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              '0531386493',
-              textDirection: TextDirection.ltr,
-              style: TextStyle(
-                fontSize: 18.0,
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -187,16 +183,5 @@ class _ForwardIcon extends StatelessWidget {
       Icons.arrow_forward_ios,
       size: 25.0,
     );
-  }
-}
-
-class _DoneIcon extends StatelessWidget {
-  const _DoneIcon({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return const Icon(Icons.done, size: 33.0);
   }
 }

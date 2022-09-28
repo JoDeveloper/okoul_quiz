@@ -3,23 +3,28 @@ import 'dart:io';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
-import 'package:quiz_ui/src/constants/constants.dart';
+import 'package:quiz_ui/src/constants/api.dart';
 import 'package:quiz_ui/src/core/data/either_result.dart';
 import 'package:quiz_ui/src/core/exceptions/custom_exception.dart';
+import 'package:quiz_ui/src/core/services/storage/local_storage_service.dart';
 
 final dioHttpProvider = Provider<DioHttpService>((ref) {
-  return DioHttpService();
+  return DioHttpService(ref);
 });
 
 class DioHttpService {
-  Map<String, String> headers = {'accept': 'application/json', 'content-type': 'application/json'};
+  final ProviderRef ref;
+  final headers = {'accept': 'application/json', 'content-type': 'application/json'};
+  Map<String, dynamic> get authHeaders => {'Authorization': 'Bearer ${ref.watch(loacalStorageProvider).getToken()}'};
+
+  DioHttpService(this.ref);
 
   Future<Either<Map<String, dynamic>, CustomException>> get(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
     String? customBaseUrl,
   }) async {
-    final response = await http.get(Uri.parse(Constants.apiBaseUrl + endpoint), headers: headers);
+    final response = await http.get(Uri.parse(Api.apiBaseUrl + endpoint), headers: headers);
     final paresdData = jsonDecode(response.body);
     if (response.statusCode != HttpStatus.ok && paresdData['success'] == false) {
       return Error(
@@ -35,15 +40,14 @@ class DioHttpService {
   Future<Either<dynamic, CustomException>> post(
     String endpoint, {
     Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? additionalHeaders,
   }) async {
-    final uri = Uri.parse(Constants.apiBaseUrl + endpoint);
+    final uri = Uri.parse(Api.apiBaseUrl + endpoint);
 
     try {
       final response = await http.post(
         uri,
         body: jsonEncode(queryParameters),
-        headers: {...headers, ...additionalHeaders ?? {}},
+        headers: {...headers, if (endpoint != Api.login) ...authHeaders},
       );
 
       final paresdData = jsonDecode(response.body);

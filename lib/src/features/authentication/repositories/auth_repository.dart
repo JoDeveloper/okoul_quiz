@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:phone_number/phone_number.dart';
-import 'package:quiz_ui/src/constants/constants.dart';
+import 'package:quiz_ui/src/constants/api.dart';
 import 'package:quiz_ui/src/core/services/dio/dio_http_service.dart';
 import 'package:quiz_ui/src/core/services/storage/local_storage_service.dart';
 import 'package:quiz_ui/src/features/authentication/data/user_model.dart';
@@ -44,9 +44,9 @@ class AuthRepository {
       onError(e.toString());
     }
 
-    final result = await httpService.post('/Login', queryParameters: {
+    final result = await httpService.post(Api.login, queryParameters: {
       'mobile': parsedNumber?.national,
-      'OTP': Constants.otp,
+      'OTP': Api.otp,
     });
 
     result.when(
@@ -66,11 +66,7 @@ class AuthRepository {
   }) async {
     if (userName == null) return;
 
-    final reponse = await httpService.post(
-      '/Name',
-      queryParameters: {'name': userName},
-      additionalHeaders: {'Authorization': 'Bearer ${localStorage.getToken()}'},
-    );
+    final reponse = await httpService.post(Api.updateUserName, queryParameters: {'name': userName});
 
     reponse.when(
       (data) {
@@ -81,4 +77,6 @@ class AuthRepository {
       (error) => onError.call(error.message!),
     );
   }
+
+  void logout() => localStorage.setToken(null);
 }

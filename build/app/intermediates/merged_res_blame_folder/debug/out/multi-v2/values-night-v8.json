@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/yousufqomer/Documents/dev/flutter/quiz_ui/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-night-v8/values-night-v8.xml",
+            "outputFile": "/Users/yousufqomer/Documents/dev/flutter/quiz_ui/okoul_quiz/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "/Users/yousufqomer/Documents/dev/flutter/quiz_ui/android/app/src/main/res/values-night/styles.xml",
+                    "source": "/Users/yousufqomer/Documents/dev/flutter/quiz_ui/okoul_quiz/android/app/src/main/res/values-night/styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

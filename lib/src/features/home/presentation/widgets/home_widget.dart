@@ -4,17 +4,36 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:quiz_ui/src/common/extensions/context_extensions.dart';
 import 'package:quiz_ui/src/common/widgets/toast.dart';
 import 'package:quiz_ui/src/constants/app_sizes.dart';
+import 'package:quiz_ui/src/constants/constants.dart';
+import 'package:quiz_ui/src/constants/questions.dart';
 import 'package:quiz_ui/src/features/authentication/repositories/auth_repository.dart';
-import 'package:quiz_ui/src/features/home/presentation/widgets/know_more.dart';
+import 'package:quiz_ui/src/features/home/presentation/widgets/counter_widget.dart';
+import 'package:quiz_ui/src/features/home/presentation/widgets/question_card.dart';
+import 'package:quiz_ui/src/features/home/repositories/home_repository.dart';
 
-class HomeWidget extends ConsumerWidget {
+class HomeWidget extends ConsumerStatefulWidget {
   const HomeWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authRepository = ref.watch(authRepositoryProvider);
+  ConsumerState<HomeWidget> createState() => _HomeWidgetState();
+}
 
-    SchedulerBinding.instance.addPostFrameCallback((_) => _checkUserName(authRepository, context));
+class _HomeWidgetState extends ConsumerState<HomeWidget> {
+  PageController? pageController;
+  @override
+  void initState() {
+    pageController = PageController();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authRepository = ref.watch(authRepositoryProvider);
+    final homeRepo = ref.watch(homeRepositoryProvider);
+
+    SchedulerBinding.instance.addPostFrameCallback(
+      (_) => _checkUserName(authRepository, context),
+    );
 
     return Scaffold(
       body: SafeArea(
@@ -25,6 +44,7 @@ class HomeWidget extends ConsumerWidget {
                 pinned: true,
                 expandedHeight: context.height * 0.18,
                 flexibleSpace: FlexibleSpaceBar(
+                  background: homeRepo.competitionStarted ? const Counter() : null,
                   centerTitle: true,
                   title: Align(
                     alignment: Alignment.bottomCenter,
@@ -41,10 +61,52 @@ class HomeWidget extends ConsumerWidget {
               ),
             ];
           },
-          body: ListView(
+          body: Column(
             children: [
-              SizedBox(height: context.height * .09),
-              const KnowMoreWidget(),
+              Visibility(
+                visible: false,
+                child: Column(
+                  children: [
+                    SizedBox(height: context.height * .09),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(text: Constants.quizQoute),
+                            TextSpan(text: Constants.quizQoute2),
+                            TextSpan(
+                              text: Constants.quizQoute3,
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(height: context.height * .09),
+                    ButtonTheme(
+                      minWidth: context.width / 3,
+                      child: OutlinedButton(
+                        onPressed: () {},
+                        child: const Text('Let\'s Go'),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: context.height / 1.5,
+                child: PageView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  controller: pageController,
+                  onPageChanged: (index) {},
+                  itemCount: questionsData.length,
+                  itemBuilder: (context, index) => QuestionCard(
+                    question: questionsData[index],
+                  ),
+                ),
+              ),
             ],
           ),
         ),

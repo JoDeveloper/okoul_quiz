@@ -173,6 +173,11 @@ class _HomeWidgetState extends ConsumerState<HomeWidget> {
       showModalBottomSheet(
         context: context,
         isDismissible: false,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20),
+          ),
+        ),
         builder: (context) {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,

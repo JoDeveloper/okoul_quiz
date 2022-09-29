@@ -16,7 +16,7 @@ abstract class Either<S, E> {
   bool get isSuccess;
 
   W when<W>(
-    W Function(S success) whenSuccess,
+    W Function(S data) whenSuccess,
     W Function(E error) whenError,
   );
 }

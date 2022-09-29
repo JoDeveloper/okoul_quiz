@@ -3,6 +3,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:quiz_ui/src/common/extensions/context_extensions.dart';
+import 'package:quiz_ui/src/common/extensions/enum_extensios.dart';
 import 'package:quiz_ui/src/common/extensions/int_extensions.dart';
 import 'package:quiz_ui/src/common/widgets/toast.dart';
 import 'package:quiz_ui/src/constants/app_sizes.dart';
@@ -34,8 +35,7 @@ class _HomeWidgetState extends ConsumerState<HomeWidget> {
     SchedulerBinding.instance.addPostFrameCallback((_) => _checkUserName());
 
     final homeRepo = ref.watch(homeRepositoryProvider);
-    final competitionStarted = ref.watch(compitionStartedProvider);
-    final timerStarted = ref.watch(timerStartedProvider);
+    final competitionStatus = ref.watch(compitionStatusProvider);
     final getQuestions = ref.watch(getQuestionsProvider);
 
     return Scaffold(
@@ -67,7 +67,7 @@ class _HomeWidgetState extends ConsumerState<HomeWidget> {
             children: [
               AnimatedSwitcher(
                 duration: 1.seconds,
-                child: competitionStarted && timerStarted
+                child: competitionStatus.isCountingDown
                     ? Align(
                         alignment: Alignment.center,
                         child: SizedBox(
@@ -82,7 +82,7 @@ class _HomeWidgetState extends ConsumerState<HomeWidget> {
               ),
               gapW24,
               Visibility(
-                visible: !competitionStarted,
+                visible: competitionStatus.isNone,
                 child: Column(
                   children: [
                     const Padding(
@@ -113,7 +113,7 @@ class _HomeWidgetState extends ConsumerState<HomeWidget> {
                 ),
               ),
               Visibility(
-                visible: competitionStarted,
+                visible: competitionStatus.isActive,
                 child: Column(
                   children: [
                     getQuestions.when(
@@ -208,7 +208,7 @@ class _HomeWidgetState extends ConsumerState<HomeWidget> {
                       await flash.successFlash(context, message: message);
                       navigator.pop();
                     },
-                    onError: (error) => flash.errorFlash(context, message: error),
+                    onError: (error) => flash.errorFlash(context, error: error),
                   );
                 },
                 child: const Text(

@@ -3,7 +3,7 @@ import 'package:quiz_ui/src/common/extensions/duration_extensions.dart';
 import 'package:quiz_ui/src/common/extensions/int_extensions.dart';
 
 class ErrorFlash extends StatelessWidget {
-  final String message;
+  final String error;
   final Color? color;
   final IconData? icon;
   final Color? iconColor;
@@ -14,7 +14,7 @@ class ErrorFlash extends StatelessWidget {
 
   const ErrorFlash({
     Key? key,
-    required this.message,
+    required this.error,
     this.color,
     this.icon,
     this.iconColor,
@@ -50,7 +50,7 @@ class ErrorFlash extends StatelessWidget {
             ),
             Expanded(
               child: Text(
-                message,
+                error,
                 style: TextStyle(fontStyle: FontStyle.normal, color: textColor),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 10,
@@ -126,16 +126,18 @@ class SuccessFlash extends StatelessWidget {
 }
 
 class ShowFlash {
-  errorFlash(BuildContext context,
-      {required final String message,
-      final Color? backgroundColor,
-      final IconData? icon,
-      final Color? iconColor,
-      final Color? textColor,
-      final String? image,
-      final AlignmentGeometry? alignment = Alignment.bottomCenter,
-      final int duration = 1500,
-      final dynamic elevation = 0.0}) {
+  errorFlash(
+    BuildContext context, {
+    required final String error,
+    final Color? backgroundColor,
+    final IconData? icon,
+    final Color? iconColor,
+    final Color? textColor,
+    final String? image,
+    final AlignmentGeometry? alignment = Alignment.bottomCenter,
+    final int duration = 1500,
+    final dynamic elevation = 0.0,
+  }) {
     return showDialog(
         barrierDismissible: false,
         barrierColor: Colors.white.withOpacity(0),
@@ -145,7 +147,7 @@ class ShowFlash {
             Navigator.of(context).pop();
           });
           return ErrorFlash(
-            message: message,
+            error: error,
             color: backgroundColor,
             icon: icon,
             iconColor: iconColor,

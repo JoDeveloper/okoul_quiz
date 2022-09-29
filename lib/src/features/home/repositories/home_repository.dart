@@ -10,16 +10,20 @@ final homeRepositoryProvider = Provider<HomeRepository>((ref) {
   return HomeRepository(ref: ref);
 });
 
-final compitionStartedProvider = StateProvider<bool>((ref) {
-  return false;
-});
-final timerStartedProvider = StateProvider<bool>((ref) {
-  return false;
+final compitionStatusProvider = StateProvider<CompitionStatus>((ref) {
+  return CompitionStatus.none;
 });
 
 final getQuestionsProvider = FutureProvider<List<Question>>((ref) async {
   return ref.watch(homeRepositoryProvider).getQuestions();
 });
+
+enum CompitionStatus {
+  none,
+  active,
+  timerStarted,
+  completed,
+}
 
 class HomeRepository {
   final ProviderRef ref;
@@ -28,7 +32,7 @@ class HomeRepository {
   });
 
   void startCompition() {
-    ref.watch(compitionStartedProvider.state).update((state) => true);
+    ref.watch(compitionStatusProvider.state).update((state) => CompitionStatus.active);
   }
 
   Future<List<Question>> getQuestions() async {
@@ -36,7 +40,7 @@ class HomeRepository {
     return response.when(
       (data) {
         final questions = questionFromJson(json.encode(data));
-        ref.watch(timerStartedProvider.state).update((state) => true);
+        ref.watch(compitionStatusProvider.state).update((state) => CompitionStatus.timerStarted);
         return questions;
       },
       (error) => [],

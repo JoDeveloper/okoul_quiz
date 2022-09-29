@@ -118,7 +118,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           setState(() {
             isLoading = false;
           });
-          flash.errorFlash(context, message: error);
+          flash.errorFlash(context, error: error);
         },
       );
     }

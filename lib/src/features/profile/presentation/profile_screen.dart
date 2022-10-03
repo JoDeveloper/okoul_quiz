@@ -98,8 +98,8 @@ class _Body extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authRepo = ref.watch(authRepositoryProvider);
-    final user = ref.watch(authRepositoryProvider).currentUser;
+    final authRepo = ref.watch(authRepositoryProvider.notifier);
+    final user = authRepo.currentUser;
 
     return SingleChildScrollView(
       child: Column(

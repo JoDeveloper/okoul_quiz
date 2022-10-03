@@ -24,7 +24,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authProvider = ref.watch(authRepositoryProvider);
+    final authProvider = ref.watch(authRepositoryProvider.notifier);
 
     return Scaffold(
       resizeToAvoidBottomInset: true,

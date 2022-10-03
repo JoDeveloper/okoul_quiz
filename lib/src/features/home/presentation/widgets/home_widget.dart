@@ -168,7 +168,7 @@ class _HomeWidgetState extends ConsumerState<HomeWidget> {
   }
 
   void _checkUserName() {
-    final authRepository = ref.read(authRepositoryProvider);
+    final authRepository = ref.read(authRepositoryProvider.notifier);
     if (authRepository.currentUser?.name == null) {
       showModalBottomSheet(
         context: context,

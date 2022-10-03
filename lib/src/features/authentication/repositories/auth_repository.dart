@@ -3,21 +3,23 @@ import 'package:phone_number/phone_number.dart';
 import 'package:quiz_ui/src/constants/api.dart';
 import 'package:quiz_ui/src/core/services/dio/dio_http_service.dart';
 import 'package:quiz_ui/src/core/services/storage/local_storage_service.dart';
+import 'package:quiz_ui/src/features/authentication/data/auth_state.dart';
 import 'package:quiz_ui/src/features/authentication/data/user_model.dart';
 
-final authRepositoryProvider = Provider<AuthRepository>((ref) {
+final authRepositoryProvider = StateNotifierProvider<AuthRepository, AuthState>((ref) {
   return AuthRepository(ref: ref);
 });
 
-class AuthRepository {
-  final ProviderRef ref;
+class AuthRepository extends StateNotifier<AuthState> {
+  final StateNotifierProviderRef<AuthRepository, AuthState> ref;
   final LocalStorage localStorage;
   final DioHttpService httpService;
 
   AuthRepository({
     required this.ref,
   })  : localStorage = ref.watch(loacalStorageProvider),
-        httpService = ref.watch(httpServiceProvider);
+        httpService = ref.watch(httpServiceProvider),
+        super(const AuthState.init());
 
   User? _user;
 

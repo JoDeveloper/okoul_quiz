@@ -1,24 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 import 'package:quiz_ui/src/features/home/presentation/widgets/home_widget.dart';
 import 'package:quiz_ui/src/features/leaderboard/presentation/leaderboard_screen.dart';
 import 'package:quiz_ui/src/features/profile/presentation/profile_screen.dart';
 
-class HomeScreen extends StatefulWidget {
+final persistentControllerProvider = Provider.autoDispose<PersistentTabController>((ref) {
+  return PersistentTabController(initialIndex: 0);
+});
+
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({Key? key}) : super(key: key);
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  PersistentTabController? _controller;
-
-  @override
-  void initState() {
-    _controller = PersistentTabController(initialIndex: 0);
-    super.initState();
-  }
 
   List<Widget> _buildScreens() {
     return [
@@ -29,10 +21,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return PersistentTabView(
       context,
-      controller: _controller,
+      controller: ref.watch(persistentControllerProvider),
       screens: _buildScreens(),
       items: _navBarsItems(),
       margin: const EdgeInsets.symmetric(horizontal: 20),

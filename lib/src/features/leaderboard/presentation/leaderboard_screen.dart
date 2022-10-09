@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quiz_ui/src/common/extensions/context_extensions.dart';
 import 'package:quiz_ui/src/constants/app_sizes.dart';
 import 'package:quiz_ui/src/features/leaderboard/data/score.dart';

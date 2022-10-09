@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quiz_ui/src/constants/api.dart';
 import 'package:quiz_ui/src/core/services/dio/dio_http_service.dart';
 import 'package:quiz_ui/src/features/leaderboard/data/score.dart';
@@ -10,7 +10,7 @@ final leadershipRepositoryProvider = Provider<LeadershipRepository>((ref) {
   return LeadershipRepository(ref);
 });
 
-final getScoresProvider = FutureProvider<List<Score>>((ref) async {
+final getScoresProvider = FutureProvider.autoDispose<List<Score>>((ref) async {
   return ref.watch(leadershipRepositoryProvider).getTopScores();
 });
 

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quiz_ui/src/features/authentication/data/user_model.dart';
 
 final loacalStorageProvider = Provider<LocalStorage>((ref) {

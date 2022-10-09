@@ -1,4 +1,4 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:phone_number/phone_number.dart';
 import 'package:quiz_ui/src/constants/api.dart';
 import 'package:quiz_ui/src/core/services/dio/dio_http_service.dart';
@@ -81,4 +81,9 @@ class AuthRepository extends StateNotifier<AuthState> {
   }
 
   void logout() => localStorage.setToken(null);
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }

@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:quiz_ui/src/constants/api.dart';
 import 'package:quiz_ui/src/features/home/data/questions.dart';
 
@@ -14,7 +14,7 @@ final compitionStatusProvider = StateProvider<CompitionStatus>((ref) {
   return CompitionStatus.none;
 });
 
-final getQuestionsProvider = FutureProvider<List<Question>>((ref) async {
+final getQuestionsProvider = FutureProvider.autoDispose<List<Question>>((ref) async {
   return ref.watch(homeRepositoryProvider).getQuestions();
 });
 

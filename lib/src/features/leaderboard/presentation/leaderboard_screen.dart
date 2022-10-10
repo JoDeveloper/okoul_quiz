@@ -1,106 +1,161 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:quiz_ui/src/common/extensions/context_extensions.dart';
-import 'package:quiz_ui/src/constants/app_sizes.dart';
-import 'package:quiz_ui/src/features/leaderboard/data/score.dart';
 import 'package:quiz_ui/src/features/leaderboard/repositories/leadership_repository.dart';
 
-class LeaderBoardScreen extends ConsumerWidget {
+import 'widgets/leader_box.dart';
+
+class LeaderBoardScreen extends ConsumerStatefulWidget {
   const LeaderBoardScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final topScores = ref.watch(getScoresProvider);
-
-    return topScores.when(
-      data: (scores) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'Scores',
-              style: Theme.of(context).textTheme.headline5?.copyWith(
-                    color: Colors.white,
-                  ),
-            ),
-            centerTitle: true,
-          ),
-          body: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: scores.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final score = scores[index];
-                return SizedBox(
-                  height: context.height * 0.19,
-                  child: InkWell(
-                    onTap: () {},
-                    child: Container(
-                      margin: const EdgeInsets.all(8.0),
-                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      width: 220,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            gapH4,
-                            Expanded(
-                              child: _Info(score: score),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        );
-      },
-      error: (error, s) => Scaffold(
-          body: Center(
-        child: Text(error.toString()),
-      )),
-      loading: () => const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      ),
-    );
-  }
+  ConsumerState<ConsumerStatefulWidget> createState() => _LeaderBoardScreenState();
 }
 
-class _Info extends StatelessWidget {
-  final Score score;
-  const _Info({
-    Key? key,
-    required this.score,
-  }) : super(key: key);
+class _LeaderBoardScreenState extends ConsumerState<LeaderBoardScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // DatabaseReference leaderboardRef =
+    //     FirebaseDatabase.instance.ref('leaderboard');
+
+    // leaderboardRef.onValue.listen((DatabaseEvent event) async {
+    //   await ref.read(leaderboardProvider.notifier).fetchLeaderboard();
+    // });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Image.asset("assets/images/okoul.png", height: 40),
-        gapH8,
-        Text(
-          score.name,
-          style: Theme.of(context).textTheme.headline5,
+    final leaderboardFuture = ref.watch(getScoresProvider);
+    final leaderboard = ref.watch(leaderboardProvider);
+
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color(0xffF5F5F5),
+        body: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              color: const Color(0xff1F1147),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    icon: const Icon(Icons.arrow_back_ios),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Leaderboard',
+                    style: TextStyle(fontSize: 23),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: leaderboardFuture.when(
+                  data: (data) => ListView(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.fromLTRB(5, 40, 5, 20),
+                            color: const Color(0xff1F1147),
+                            child: Row(
+                              children: [
+                                BoxLeaderBoard(
+                                  rank: 2,
+                                  image: leaderboard[2].profilePicture,
+                                  name: leaderboard[2].name ?? '',
+                                  points: leaderboard[2].points,
+                                  padding: 0,
+                                ),
+                                BoxLeaderBoard(
+                                  rank: 1,
+                                  image: leaderboard[1].profilePicture,
+                                  name: leaderboard[1].name ?? '',
+                                  points: leaderboard[1].points,
+                                  padding: 60,
+                                ),
+                                BoxLeaderBoard(
+                                  rank: 3,
+                                  image: leaderboard[3].profilePicture,
+                                  name: leaderboard[3].name ?? '',
+                                  points: leaderboard[3].points,
+                                  padding: 0,
+                                ),
+                              ],
+                            ),
+                          ),
+                          ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: leaderboard.length - 3,
+                            itemBuilder: (BuildContext context, int index) {
+                              int newIndex = index + 3;
+                              return Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: Colors.white, boxShadow: const [
+                                  BoxShadow(spreadRadius: 0, blurRadius: 4, color: Color.fromARGB(54, 0, 0, 0)),
+                                ]),
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      '#${newIndex + 1}',
+                                      style: const TextStyle(
+                                        color: Color(0xff6948FE),
+                                        fontSize: 23,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    ClipOval(
+                                      child: Image.network(
+                                        leaderboard[newIndex].profilePicture,
+                                        width: 50,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Flexible(
+                                      child: Text(
+                                        leaderboard[newIndex].name ?? '',
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: Color(0xff1F1147),
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    Image.asset(
+                                      'assets/images/award${leaderboard[newIndex].division}.png',
+                                      width: 40,
+                                    ),
+                                    Text(
+                                      leaderboard[newIndex].points.toString(),
+                                      style: const TextStyle(
+                                        color: Color(0xff1F1147),
+                                        fontSize: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                  error: (e, st) => Text(e.toString()),
+                  loading: () => const Center(child: CircularProgressIndicator())),
+            ),
+          ],
         ),
-        gapH8,
-        Text(
-          '${score.score}',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.labelLarge,
-        ),
-      ],
+      ),
     );
   }
 }
